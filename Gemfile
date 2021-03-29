@@ -18,4 +18,5 @@ group :test do
   gem 'pg'
   gem 'rake'
   gem 'rspec'
+  gem 'rack-utm'
 end

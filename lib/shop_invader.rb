@@ -25,6 +25,7 @@ require_relative_all %w(concerns concerns/sitemap), 'shop_invader/middlewares'
 require_relative_all %w(. drops filters tags tags/concerns), 'shop_invader/liquid'
 require 'shop_invader/steam_patches'
 require 'faraday'
+require 'rack-utm'
 
 def should_notify_erp(payload)
   payload[:request].env['steam.site'].metafields.include?('erp') && payload[:entry].content_type.slug.downcase == 'customers'
@@ -71,6 +72,7 @@ module ShopInvader
 
   def self.setup
     Locomotive::Steam.configure do |config|
+      config.middleware.insert_after Locomotive::Steam::Middlewares::Site, Rack::Utm
       config.middleware.insert_after Locomotive::Steam::Middlewares::TemplatizedPage, ShopInvader::Middlewares::TemplatizedPage
       config.middleware.insert_before Locomotive::Steam::Middlewares::Path, ShopInvader::Middlewares::Store
       config.middleware.insert_after Locomotive::Steam::Middlewares::Path, ShopInvader::Middlewares::ErpProxy
